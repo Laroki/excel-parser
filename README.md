@@ -1,4 +1,4 @@
 # ExcelParser
 
-npm i
+npm i\
 npm start
