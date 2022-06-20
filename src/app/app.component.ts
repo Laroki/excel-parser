@@ -1,10 +1,7 @@
-import { Component, ViewChild } from '@angular/core';
+import { Component } from '@angular/core';
 
 import * as xlsx from 'xlsx';
-import { ChartComponent } from "ng-apexcharts";
-
 import { Sheet } from './class/sheet';
-import { ChartOptions } from './model/apex.model';
 
 @Component({
   selector: 'app-root',
@@ -13,8 +10,6 @@ import { ChartOptions } from './model/apex.model';
 })
 
 export class AppComponent {
-  @ViewChild("chart") chart!: ChartComponent;
-  public chartOptions!: Partial<ChartOptions>;
   public sheets: Sheet[] = [];
 
   constructor() { }
@@ -33,31 +28,20 @@ export class AppComponent {
       const wb: xlsx.WorkBook = xlsx.read(binarystr, { type: 'binary' });
       const sheetNames: string[] = wb.SheetNames;
 
+      console.log(sheetNames);
+
       sheetNames.forEach(sheetName => {
         const ws: xlsx.WorkSheet = wb.Sheets[sheetName];
         const data = xlsx.utils.sheet_to_json(ws); // to get 2d array pass 2nd parameter as object {header: 1}
         console.log(data); // Data will be logged in array format containing objects
 
         // Create sheet and push it in sheets array
-        const sheet = new Sheet(data);
+        const sheet = new Sheet(data, sheetName);
         this.sheets.push(sheet)
       });
-
-      this.setChartOptions(this.sheets[1]);
+      console.table(this.sheets);
     };
   }
 
-  setChartOptions(sheet: Sheet) {
-    this.chartOptions = {
-      series: sheet.getChartSeries(),
-      chart: {
-        height: 350,
-        type: "bar"
-      },
-      title: {
-        text: sheet.getChartTitle().toUpperCase()
-      }
-    };
-  }
 
 }

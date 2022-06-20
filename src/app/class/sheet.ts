@@ -1,18 +1,23 @@
 import { ApexAxisChartSeries } from "ng-apexcharts";
+import { ChartOptions } from "../model/apex.model";
 
 export class Sheet {
 	rawData!: any[];
-
 	metaData!: any[];
 	chartData!: any[];
 
-	private chartSeries!: ApexAxisChartSeries;
+	name!: string;
 
-	constructor(rawData: any[]) {
+	private chartSeries!: ApexAxisChartSeries;
+	public chartOptions!: Partial<ChartOptions>;
+
+	constructor(rawData: any[], name: string) {
 		this.rawData = rawData;
+		this.name = name;
 		this.metaData = this.rawData.slice(0, 6);
 		this.chartData = this.rawData.slice(6, this.rawData.length);
 		this.setChartSeries();
+		this.setChartOptions();
 	}
 
 	private setChartSeries() {
@@ -26,11 +31,20 @@ export class Sheet {
 		]
 	}
 
-	public getChartTitle(): string {
-		return Object.values(this.metaData[0])[1] as string;
+	private setChartOptions() {
+		this.chartOptions = {
+			series: this.chartSeries,
+			chart: {
+				height: 350,
+				type: "bar"
+			},
+			title: {
+				text: this.getChartTitle().toUpperCase()
+			}
+		};
 	}
 
-	public getChartSeries(): ApexAxisChartSeries {
-		return this.chartSeries;
+	private getChartTitle(): string {
+		return Object.values(this.metaData[0])[1] as string;
 	}
 }

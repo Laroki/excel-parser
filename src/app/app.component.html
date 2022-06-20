@@ -1,15 +1,23 @@
-<input type="file" style="display: inline-block;" (change)="onFileChange($event)" placeholder="Upload file" accept=".xlsx">
+<input #input type="file" style="display: none;" (change)="onFileChange($event)" placeholder="Upload file" accept=".xlsx">
 
-<div>
-    <!-- META DATA -->
-    <div *ngFor="let metaData of sheets[1]?.metaData">
-        <div *ngFor="let item of metaData | keyvalue">
-            <strong>{{item.key}}</strong>: {{item.value}}
-        </div>
-        <br>
-    </div>
-</div>
-
-<pre>CHART DATA: {{sheets[0]?.chartData | json}}</pre>
-
-<apx-chart *ngIf="chartOptions" [series]="chartOptions.series!" [chart]="chartOptions.chart!" [title]="chartOptions.title!"></apx-chart>
+<button (click)="input.click()" mat-button color="accent">Parcourir...</button>
+<mat-tab-group>
+    
+    <mat-tab *ngFor="let sheet of sheets" [label]="sheet.name | titlecase">
+        <ng-template matTabContent>
+            <!-- META DATA -->
+            <div *ngFor="let metaData of sheet?.metaData" class="d-flex" [style.padding]="'10px'">
+                <div class="mr-1" *ngFor="let item of metaData | keyvalue">
+                    {{item.value}} <br>
+                </div>
+                <br>
+            </div>
+              
+            <apx-chart
+                [series]="sheet.chartOptions.series!"
+                [chart]="sheet.chartOptions.chart!"
+                [title]="sheet.chartOptions.title!">
+            </apx-chart>
+        </ng-template>
+    </mat-tab>
+</mat-tab-group>
